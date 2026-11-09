@@ -16,3 +16,6 @@ embeddings_cache.pkl
 
 # OS
 .DS_Store
+
+# Examples
+example/
