@@ -1,0 +1,5 @@
+TITLE = "title_en"
+COUNTRY = "country"
+DESCRIPTION = "gpt-5-chat"
+EMBEDDINGS = "embeddings"
+SIMILARITY = "similarity"

@@ -2,7 +2,9 @@ import re
 import numpy as np
 from rank_bm25 import BM25Okapi
 from collections import defaultdict
-from build_dataframe import get_dataframe, DATASET_TITLE_FIELD, DATASET_DESCRIPTION_FIELD
+from build_dataframe import get_dataframe
+import dataset_fields as DATASET_FIELD
+from search_utils import print_results
 
 df = get_dataframe()
 
@@ -11,7 +13,7 @@ def tokenize(text: str) -> list[str]:
 
 inverted_index = defaultdict(set)
 
-for doc_id, text in enumerate(df[DATASET_DESCRIPTION_FIELD].fillna("")):
+for doc_id, text in enumerate(df[DATASET_FIELD.DESCRIPTION].fillna("")):
     for token in tokenize(text):
         inverted_index[token].add(doc_id)
 
@@ -34,9 +36,9 @@ print(f"Documents which contain ALL query words: {len((matching_docs or set()))}
 
 if matching_docs:
     for doc_id in sorted(matching_docs)[:5]:
-        print(f"    [{doc_id}] {df.iloc[doc_id][DATASET_TITLE_FIELD]}: {df.iloc[doc_id][DATASET_DESCRIPTION_FIELD][:100]}...")
+        print(f"    [{doc_id}] {df.iloc[doc_id][DATASET_FIELD.TITLE]}: {df.iloc[doc_id][DATASET_FIELD.DESCRIPTION][:100]}...")
 
-corpus_tokenized = [tokenize(text) for text in df[DATASET_DESCRIPTION_FIELD].fillna("")]
+corpus_tokenized = [tokenize(text) for text in df[DATASET_FIELD.DESCRIPTION].fillna("")]
 bm25 = BM25Okapi(corpus_tokenized)
 
 print(f"BM25 is built for {len(corpus_tokenized)} documents")
@@ -53,22 +55,11 @@ def search_bm25(query: str, top_k: int = 10) -> list[dict]:
             "rank": len(results) + 1,
             "doc_id": int(idx),
             "score": float(scores[idx]),
-            "title": df.iloc[idx][DATASET_TITLE_FIELD],
-            "overview": df.iloc[idx][DATASET_DESCRIPTION_FIELD][:150],
+            "title": df.iloc[idx][DATASET_FIELD.TITLE],
+            "overview": df.iloc[idx][DATASET_FIELD.DESCRIPTION][:150],
         })
 
     return results
-
-def print_results(results: list[dict], label: str = ""):
-    if label:
-        print(f"\n{'='*60}")
-        print(f"  {label}")
-        print(f"{'='*60}")
-
-    for r in results:
-        print(f"  #{r['rank']} [score={r['score']:.4f}] {r['title']}")
-        print(f"     {r['overview']}...")
-        print()
 
 
 EXACT_TEST_QUERY = "Ford Mustang"

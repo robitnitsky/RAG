@@ -1,13 +1,11 @@
 import os
 from datasets import load_dataset
 import pandas as pd
+import dataset_fields as DATASET_FIELD
 
 BATCH_SIZE = 64
 
 DATASET = "myyycroft/RiDiC_cars_self_consistency_15_generations"
-DATASET_TITLE_FIELD = "title_en"
-DATASET_COUNTRY_FIELD = "country"
-DATASET_DESCRIPTION_FIELD = "gpt-5-chat"
 
 MODEL = "all-MiniLM-L6-v2"
 
@@ -19,9 +17,9 @@ def build_dataframe():
 
     ds = load_dataset(DATASET)
     df = ds["train"].to_pandas()
-    df = df[[DATASET_TITLE_FIELD, DATASET_COUNTRY_FIELD, DATASET_DESCRIPTION_FIELD]].copy()
+    df = df[[DATASET_FIELD.TITLE, DATASET_FIELD.COUNTRY, DATASET_FIELD.DESCRIPTION]].copy()
 
-    texts = df[DATASET_DESCRIPTION_FIELD].fillna("").tolist()
+    texts = df[DATASET_FIELD.DESCRIPTION].fillna("").tolist()
     all_embeddings = [None] * len(texts)
 
     valid_indices = [i for i, t in enumerate(texts) if t.strip() != ""]
@@ -36,7 +34,7 @@ def build_dataframe():
     for idx, emb in zip(valid_indices, embeddings):
         all_embeddings[idx] = emb.tolist()
 
-    df['embeddings'] = all_embeddings
+    df[DATASET_FIELD.EMBEDDINGS] = all_embeddings
     return df
 
 def get_dataframe():
@@ -48,7 +46,7 @@ def get_dataframe():
         df.to_pickle(CACHE_FILE_NAME)
         print(f"Saved in cache: {CACHE_FILE_NAME}")
 
-    success_count = df["embeddings"].notna().sum()
+    success_count = df[DATASET_FIELD.EMBEDDINGS].notna().sum()
     print(f"\n Embeddings are ready for {success_count}/{len(df)} records!")
     print(df.head())
 
