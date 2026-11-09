@@ -25,10 +25,10 @@ def rag_answer(question: str, top_k: int = 10) -> str:
 
     promt = f"""You are a car intusiast.
     Answer the user's question based ONLY on the provided information below.
-    If user asks fully electric or fully gasoline car, you can sugges a hybrid car as last chance, but only if it's presented in the provided information below.
+    If user asks fully electric or fully gasoline car, you can suggest a hybrid car as last chance, but only if it's presented in the provided information below.
     If the answer cannot be found in the provided context, say so.
     ##Motivation:
-    if you follow the instructions and find the most reliable variant, you'll be payed with sighificant reward.
+    if you follow the instructions and find the most reliable variant, you'll be payed with significant reward.
 
     ## Retrieved Cars Information:
 
@@ -40,7 +40,7 @@ def rag_answer(question: str, top_k: int = 10) -> str:
     ##Answer:"""
 
     message = client.messages.create(
-        model="claude-opus-5-5",
+        model="claude-haiku-5-5",
         max_tokens=2048,
         messages=[
             {
