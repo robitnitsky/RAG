@@ -1,0 +1,5 @@
+RANK = "rank"
+DOC_ID = "doc_id"
+SCORE = "score"
+TITLE = "title"
+OVERVIEW = "overview"
