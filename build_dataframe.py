@@ -7,7 +7,10 @@ BATCH_SIZE = 64
 
 DATASET = "myyycroft/RiDiC_cars_self_consistency_15_generations"
 
-MODEL = "all-MiniLM-L6-v2"
+MODEL = "BAAI/bge-base-en-v1.5"
+
+# BGE expects this prefix on search queries (not on documents)
+QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 
 CACHE_FILE_NAME = "embeddings_cache.pkl"
 
@@ -19,11 +22,17 @@ def build_dataframe():
     df = ds["train"].to_pandas()
     df = df[[DATASET_FIELD.TITLE, DATASET_FIELD.COUNTRY, DATASET_FIELD.DESCRIPTION]].copy()
 
-    texts = df[DATASET_FIELD.DESCRIPTION].fillna("").tolist()
-    all_embeddings = [None] * len(texts)
+    descriptions = df[DATASET_FIELD.DESCRIPTION].fillna("").tolist()
+    titles = df[DATASET_FIELD.TITLE].fillna("").tolist()
+    countries = df[DATASET_FIELD.COUNTRY].fillna("").tolist()
+    all_embeddings = [None] * len(descriptions)
 
-    valid_indices = [i for i, t in enumerate(texts) if t.strip() != ""]
-    valid_texts = [texts[i] for i in valid_indices]
+    # Skip records without a description; title/country alone carry too little signal
+    valid_indices = [i for i, d in enumerate(descriptions) if d.strip() != ""]
+    valid_texts = [
+        f"{titles[i]}. Country: {countries[i]}. {descriptions[i]}"
+        for i in valid_indices
+    ]
 
     embeddings = model.encode(
         valid_texts,

@@ -53,7 +53,7 @@ def rag_answer(question: str, top_k: int = 10) -> str:
     answer = "".join(block.text for block in message.content if block.type == "text")
     return answer, results
 
-TEST_QUESTION = "I want to buy a family car. It must be electric, comfy for 4 passangers, not expensive and easy to use"
+TEST_QUESTION = "I need a diesel track for heavy duty on the building sites. It must be durable, powerful and able to tow heavy trailers."
 
 answer, retrieved = rag_answer(TEST_QUESTION, 20)
 

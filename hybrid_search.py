@@ -32,7 +32,7 @@ def search_hybrid(query: str, top_k: int = 10) -> list[dict]:
     return reciprocal_rank_fusion([bm25_results, dense_results], top_k = top_k)
 
 if __name__ == "__main__":
-    TEST_QUERY = "electric car with 450 horse power from 2008 to 2012"
+    TEST_QUERY = "Ford offroad car"
 
     bm25_res = search_bm25(TEST_QUERY, top_k = 5)
     dense_res = search_dense(TEST_QUERY, top_k = 5)
